@@ -45,6 +45,13 @@ public class FurnitureController {
         return JSON.toJSONString(Result.ok(furnitures));
     }
 
+    @ApiOperation("根据Id查询对应家具")
+    @GetMapping("/getfurnitureById/{id}")
+    public Result GetFurnitureByTag(@PathVariable Integer id) {
+        Furniture furniture = furnitureService.getById(id);
+        return Result.ok(furniture);
+    }
+
     @ApiOperation("添加家具")
     @PostMapping("/addfurniture")
     public String AddFurniture(Furniture furniture) {
