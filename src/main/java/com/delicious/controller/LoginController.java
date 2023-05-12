@@ -49,7 +49,7 @@ public class LoginController {
             return Result.fail().setMessage("密码错误");
         }
         String token = JwtUtils.getToken(admin.getAdminCode());
-        HashMap<String, String> map = new HashMap<>();
+        Map<String, String> map = new HashMap<>();
         map.put("token",token);
         return Result.ok(map);
     }
