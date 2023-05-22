@@ -21,6 +21,7 @@ import java.util.List;
 
 @RestController
 @Api(tags = "家具仓库类")
+@CrossOrigin
 public class FurnitureController {
 
     @Resource

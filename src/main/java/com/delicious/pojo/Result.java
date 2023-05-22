@@ -19,55 +19,51 @@ public class Result<T> {
     private Result() {
     }
 
-    private Result(ResultCodeEnum resultCodeEnum) {
-        this.code = resultCodeEnum.getCode();
-        this.message = resultCodeEnum.getMessage();
+    private Result(ResultEnum resultEnum) {
+        this.code = resultEnum.getCode();
+        this.message = resultEnum.getMessage();
         this.data = null;
     }
 
-    private Result(T data, ResultCodeEnum resultCodeEnum) {
-        this.code = resultCodeEnum.getCode();
-        this.message = resultCodeEnum.getMessage();
+    private Result(T data, ResultEnum resultEnum) {
+        this.code = resultEnum.getCode();
+        this.message = resultEnum.getMessage();
         this.data = data;
     }
 
-    //    public Result<T> build(T body, ResultCodeEnum resultCodeEnum) {
-//        Result<T> result = new Result<>();
-//        if (body != null) {
-//            result.setData(body);
-//        }
-//        result.setCode(resultCodeEnum.getCode());
-//        result.setMessage(resultCodeEnum.getMessage());
-//        return result;
-//    }
-    //提供一个修改信息的方法
+    //提供一个修改message的方法
     public Result setMessage(String message) {
         this.message = message;
         return this;
     }
+    //提供一个修改code的方法
+    public Result setCode(Integer Code) {
+        this.code = Code;
+        return this;
+    }
 
     public static <T> Result<T> ok() {
-        return new Result<>(ResultCodeEnum.SUCCESS);
+        return new Result<>(ResultEnum.SUCCESS);
     }
 
     public static <T> Result<T> ok(T data) {
-        return new Result<>(data, ResultCodeEnum.SUCCESS);
+        return new Result<>(data, ResultEnum.SUCCESS);
     }
 
     public static <T> Result<T> fail() {
-        return new Result<>(ResultCodeEnum.FAIL);
+        return new Result<>(ResultEnum.FAIL);
     }
 
     public static <T> Result<T> fail(T data) {
-        return new Result<>(data, ResultCodeEnum.FAIL);
+        return new Result<>(data, ResultEnum.FAIL);
     }
 
     public static <T> Result<T> error() {
-        return new Result<>(ResultCodeEnum.ERROR);
+        return new Result<>(ResultEnum.ERROR);
     }
 
     public static <T> Result<T> error(T data) {
-        return new Result<>(data, ResultCodeEnum.ERROR);
+        return new Result<>(data, ResultEnum.ERROR);
     }
 
 }

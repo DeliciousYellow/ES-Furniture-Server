@@ -41,6 +41,16 @@
             <version>2.7.9</version>
             <optional>true</optional>
         </dependency>
+        <!--Spring AOP-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+        <!--AspectJ Weaver 是一个用于编译和加载 AspectJ 切面的库。它提供了在运行时织入切面的功能。-->
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+        </dependency>
         <!--引入3.0版本的Swagger-->
         <dependency>
             <groupId>io.springfox</groupId>
