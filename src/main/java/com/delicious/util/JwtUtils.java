@@ -15,10 +15,11 @@ import java.util.Date;
 public class JwtUtils {
 
     //设置Token有效时间
-    private static long expire = 60*60*24;
+    private static final long expire = 60*60*24;
 //    private static long expire = 2;
     //设置32位密钥(图方便用的微信小程序的密钥)
-    private static String secret = "f213fda860e6e72fb1c3d8aa4ed0976e";
+//    private static String secret = "f213fda860e6e72fb1c3d8aa4ed0976e";
+    private static final String secret = "abcdefghijklmnopqrstuvwxyz123456";
 
     //token生成
     public static String getToken(String AdminCode) {
