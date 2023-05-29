@@ -10,4 +10,5 @@ import com.delicious.pojo.entity.Mapping;
  * @create: 2023-04-12 00:03
  **/
 public interface MappingService extends IService<Mapping> {
+    Boolean SaveByFurnitureIdAndTagId(Mapping mapping);
 }

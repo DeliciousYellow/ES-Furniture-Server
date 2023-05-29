@@ -6,6 +6,8 @@ import com.delicious.pojo.entity.Mapping;
 import com.delicious.service.MappingService;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
+
 /**
  * @program: ES-furniture
  * @description:
@@ -14,4 +16,11 @@ import org.springframework.stereotype.Service;
  **/
 @Service
 public class MappingServiceImpl extends ServiceImpl<MappingMapper, Mapping> implements MappingService {
+    @Resource
+    private MappingMapper mappingMapper;
+    @Override
+    public Boolean SaveByFurnitureIdAndTagId(Mapping mapping) {
+        return mappingMapper.InsertByFurnitureIdAndTagId(mapping.getFurnitureId(),mapping.getTagId());
+    }
+
 }

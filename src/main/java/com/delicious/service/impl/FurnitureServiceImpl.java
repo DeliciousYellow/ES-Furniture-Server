@@ -9,10 +9,13 @@ import com.delicious.pojo.entity.Tag;
 import com.delicious.service.FurnitureService;
 import com.delicious.service.MappingService;
 import com.delicious.service.TagService;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -50,5 +53,17 @@ public class FurnitureServiceImpl extends ServiceImpl<FurnitureMapper, Furniture
             datalist.add(furnitureMapper.selectOne(wrapperx));
         });
         return datalist;
+    }
+
+    @Override
+    public HashMap<String, Object> GetFurnitureAllPage(Integer page, Integer pageSize) {
+        HashMap<String, Object> map = new HashMap<>();
+
+        PageHelper.startPage(page,pageSize);
+        List<Furniture> furnitures = furnitureMapper.selectList(null);
+        map.put("furnitures",furnitures);
+        PageInfo<Furniture> pageInfo = new PageInfo<>(furnitures);
+        map.put("total",pageInfo.getTotal());
+        return map;
     }
 }

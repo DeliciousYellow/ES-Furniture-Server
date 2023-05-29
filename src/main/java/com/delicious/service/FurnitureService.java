@@ -4,6 +4,7 @@ package com.delicious.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.delicious.pojo.entity.Furniture;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -14,4 +15,5 @@ import java.util.List;
  **/
 public interface FurnitureService extends IService<Furniture> {
     List<Furniture> GetFurnitureByTag(String detail);
+    HashMap<String, Object> GetFurnitureAllPage(Integer page, Integer pageSize);
 }

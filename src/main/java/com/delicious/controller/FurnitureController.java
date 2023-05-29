@@ -2,6 +2,7 @@ package com.delicious.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.delicious.annotation.AdminInterceptor;
 import com.delicious.pojo.Result;
 import com.delicious.pojo.entity.Furniture;
 import com.delicious.service.FurnitureService;
@@ -10,6 +11,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -76,4 +78,16 @@ public class FurnitureController {
             return JSON.toJSONString(Result.fail());
         }
     }
+
+    //=========================================以下是管理员后台的接口============================================================
+
+    @ApiOperation("分页获取家具信息")
+    @GetMapping("/Admin/GetFurnitureAllPage/{page}/{pageSize}")
+    @AdminInterceptor
+    public Result GetTablePage(@PathVariable Integer page,@PathVariable Integer pageSize) {
+        HashMap<String, Object> map = furnitureService.GetFurnitureAllPage(page,pageSize);
+        System.out.println(map);
+        return Result.ok(map);
+    }
+
 }

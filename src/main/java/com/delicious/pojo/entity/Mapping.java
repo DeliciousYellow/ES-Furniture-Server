@@ -16,6 +16,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @TableName("t_mapping")//不同名映射
 public class Mapping {
-    private Integer tagId;
     private Integer furnitureId;
+    private Integer tagId;
 }
