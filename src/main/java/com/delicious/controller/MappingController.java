@@ -13,11 +13,8 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import springfox.documentation.spring.web.json.Json;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * @program: ES-furniture
@@ -43,6 +40,7 @@ public class MappingController {
         Integer furnitureId = jsonObject.getInteger("furnitureId");
         JSONArray arrTagId = jsonObject.getJSONArray("arrTagId");
 
+        mappingService.remove(null);
         int count = 0;
         for (Object tagId : arrTagId) {
             Mapping mapping = new Mapping(furnitureId, (Integer) tagId);
