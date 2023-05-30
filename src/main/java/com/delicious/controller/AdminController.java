@@ -1,13 +1,9 @@
 package com.delicious.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.delicious.annotation.AdminInterceptor;
+import com.delicious.annotation.CheckToken;
 import com.delicious.pojo.Result;
 import com.delicious.pojo.entity.Admin;
-import com.delicious.pojo.entity.Furniture;
-import com.delicious.pojo.entity.Tag;
 import com.delicious.service.AdminService;
 import com.delicious.service.FurnitureService;
 import com.delicious.util.JwtUtils;
@@ -16,8 +12,6 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * @program: ES-furniture
@@ -28,7 +22,7 @@ import java.util.List;
 @Api(tags = "管理后台相关接口")
 @RestController
 @CrossOrigin
-@AdminInterceptor
+@CheckToken
 @RequestMapping("/Admin")
 public class AdminController {
     @Resource

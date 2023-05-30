@@ -3,7 +3,7 @@ package com.delicious.controller;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.delicious.annotation.AdminInterceptor;
+import com.delicious.annotation.CheckToken;
 import com.delicious.pojo.Result;
 import com.delicious.pojo.entity.Mapping;
 import com.delicious.pojo.entity.Tag;
@@ -58,7 +58,7 @@ public class TagController {
 
     @ApiOperation("管理员查询所有标签信息")
     @GetMapping("/Admin/GetTagAll")
-    @AdminInterceptor
+    @CheckToken
     public Result GetTagAll() {
         List<Tag> list = tagService.list(null);
         return Result.ok(list);
@@ -66,7 +66,7 @@ public class TagController {
 
     @ApiOperation("管理员根据商品ID查询其拥有的标签")
     @GetMapping("/Admin/GetTagById/{id}")
-    @AdminInterceptor
+    @CheckToken
     public Result GetTagById(@PathVariable Integer id) {
         LambdaQueryWrapper<Mapping> mappingwrapper = new LambdaQueryWrapper<>();
         mappingwrapper.eq(Mapping::getFurnitureId,id);

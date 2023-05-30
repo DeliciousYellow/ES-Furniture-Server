@@ -3,7 +3,9 @@ package com.delicious.controller;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.delicious.annotation.AdminInterceptor;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.delicious.annotation.AddLog;
+import com.delicious.annotation.CheckToken;
 import com.delicious.pojo.Result;
 import com.delicious.pojo.entity.Mapping;
 import com.delicious.service.MappingService;
@@ -31,16 +33,19 @@ public class MappingController {
     MappingService mappingService;
 
 
-    //=========================================以下是管理员后台的接口============================================================
+    //=========================================以下是管理员后台的接口=======================================================
     @ApiOperation("管理员根据{\"furnitureId\":1,\"arrTagId\":[14,1]}添加对应关系")
+    @AddLog
+    @CheckToken
     @PostMapping("/Admin/SaveMapping")
-    @AdminInterceptor
     public Result SaveMapping(@RequestBody String IdAndArrIdJSON) {
         JSONObject jsonObject = JSON.parseObject(IdAndArrIdJSON);
         Integer furnitureId = jsonObject.getInteger("furnitureId");
         JSONArray arrTagId = jsonObject.getJSONArray("arrTagId");
 
-        mappingService.remove(null);
+        LambdaQueryWrapper<Mapping> wrapper = new LambdaQueryWrapper<>();
+        mappingService.remove(wrapper.eq(Mapping::getFurnitureId,furnitureId));
+
         int count = 0;
         for (Object tagId : arrTagId) {
             Mapping mapping = new Mapping(furnitureId, (Integer) tagId);

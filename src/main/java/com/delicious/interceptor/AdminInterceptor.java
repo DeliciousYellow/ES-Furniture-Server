@@ -30,10 +30,11 @@ public class AdminInterceptor {
     //@within匹配带有指定注解的类
     //@annotation匹配带有指定注解的方法
     //@Before不能阻止方法的执行
-    @Around("@within(com.delicious.annotation.AdminInterceptor)")
-    public Object intercept(ProceedingJoinPoint joinPoint) throws Throwable {
+    @Around("@annotation(com.delicious.annotation.CheckToken) || @within(com.delicious.annotation.CheckToken)")
+    public Object CheckToken(ProceedingJoinPoint joinPoint) throws Throwable {
         String token = request.getHeader("X-Token");
         System.out.println("请求头中的X-Token：" + token);
+        System.out.println("====================================验证了token==================================================");
         //拿到AdminCode可以在这里添加该管理员的行为日志
 //        String AdminCode = JwtUtils.getClaimsByToken(token).getSubject();
         try {
@@ -48,5 +49,14 @@ public class AdminInterceptor {
             return Result.error().setMessage(e.getMessage());
         }
         return joinPoint.proceed();
+    }
+
+    @Around("@annotation(com.delicious.annotation.AddLog)")
+    public Object AddLog(ProceedingJoinPoint joinPoint) throws Throwable {
+        System.out.println(joinPoint.getThis());
+        System.out.println("======================================添加了Log================================================");
+        joinPoint.proceed();
+
+        return null;
     }
 }

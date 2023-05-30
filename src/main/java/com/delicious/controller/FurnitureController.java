@@ -2,7 +2,7 @@ package com.delicious.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.delicious.annotation.AdminInterceptor;
+import com.delicious.annotation.CheckToken;
 import com.delicious.pojo.Result;
 import com.delicious.pojo.entity.Furniture;
 import com.delicious.service.FurnitureService;
@@ -83,7 +83,7 @@ public class FurnitureController {
 
     @ApiOperation("分页获取家具信息")
     @GetMapping("/Admin/GetFurnitureAllPage/{page}/{pageSize}")
-    @AdminInterceptor
+    @CheckToken
     public Result GetTablePage(@PathVariable Integer page,@PathVariable Integer pageSize) {
         HashMap<String, Object> map = furnitureService.GetFurnitureAllPage(page,pageSize);
         System.out.println(map);
