@@ -1,6 +1,8 @@
 package com.delicious.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.delicious.annotation.CheckToken;
@@ -11,11 +13,14 @@ import com.delicious.service.MappingService;
 import com.delicious.service.TagService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @program: ES-furniture
@@ -49,7 +54,7 @@ public class TagController {
     @GetMapping("/gettag/{type}")
     public String GetTagByType(@PathVariable String type) {
         LambdaQueryWrapper<Tag> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Tag::getTagType, type).select(Tag::getTagDetail);
+        wrapper.eq(Tag::getTagType, type).select(Tag::getTagName);
         List<Tag> list = tagService.list(wrapper);
         return JSON.toJSONString(Result.ok(list));
     }
@@ -77,6 +82,54 @@ public class TagController {
             tags.add(tagService.getById(m.getTagId()));
         }
         return Result.ok(tags);
+    }
+
+    @ApiOperation("管理员添加Tag标签")
+    @PostMapping("/Admin/AddTag")
+    @CheckToken
+    public Result AddTag(@RequestBody Tag tag) {
+        LambdaQueryWrapper<Tag> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Tag::getTagName,tag.getTagName());
+        List<Tag> list = tagService.list(wrapper);
+        if (list==null){
+            //不存在同名标签，直接添加
+            boolean save = tagService.save(tag);
+            return Result.ok().setMessage("成功添加了"+1+"条数据");
+        }else {
+            //存在同名标签
+            AtomicBoolean flag = new AtomicBoolean(true);
+            list.forEach(t->{
+                if(t.getTagType().equals(tag.getTagType())){
+                    flag.set(false);
+                }
+            });
+            if (flag.get()){
+                //如果同名的情况下，类型不同，则添加
+                boolean save = tagService.save(tag);
+                return Result.ok().setMessage("成功添加了"+1+"条数据");
+            }
+        }
+        return Result.fail().setMessage("已存在相同的标签");
+    }
+
+    @ApiOperation("管理员删除Tag标签")
+    @DeleteMapping("/Admin/DeleteTag")
+    @CheckToken
+    public Result DeleteTag(@RequestBody String JsonArrTagId) {
+        JSONObject jsonObject = JSON.parseObject(JsonArrTagId);
+        String arrTagId = jsonObject.getString("arrTagId");
+        JSONArray jsonArray = JSON.parseArray(arrTagId);
+        AtomicInteger count = new AtomicInteger(0);
+        jsonArray.forEach(tagId ->{
+            boolean bool = tagService.removeById((Integer)tagId);
+            if (bool){
+                //如果成功删除了标签，就需要删除mapping表中所有使用过该标签的映射关系
+                LambdaQueryWrapper<Mapping> wrapper = new LambdaQueryWrapper<>();
+                mappingService.remove(wrapper.eq(Mapping::getTagId,tagId));
+                count.getAndIncrement();
+            }
+        });
+        return Result.ok(count.get()).setMessage("成功删除了"+count.get()+"条数据");
     }
 
 }

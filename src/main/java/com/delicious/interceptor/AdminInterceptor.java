@@ -52,11 +52,14 @@ public class AdminInterceptor {
     }
 
     @Around("@annotation(com.delicious.annotation.AddLog)")
-    public Object AddLog(ProceedingJoinPoint joinPoint) throws Throwable {
+    public Result AddLog(ProceedingJoinPoint joinPoint) throws Throwable {
         System.out.println(joinPoint.getThis());
         System.out.println("======================================添加了Log================================================");
-        joinPoint.proceed();
 
-        return null;
+        //重新接收目标方法的返回值
+        Result result = (Result) joinPoint.proceed();
+
+        System.out.println(result);
+        return result;
     }
 }

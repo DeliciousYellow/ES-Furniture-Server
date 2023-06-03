@@ -21,6 +21,6 @@ public class Tag {
     @TableId(type = IdType.AUTO)//自增主键字段自动赋值给对应的主键属性
     private Integer tagId;
 
-    private String tagDetail;
+    private String tagName;
     private String tagType;
 }

@@ -38,7 +38,7 @@ public class FurnitureServiceImpl extends ServiceImpl<FurnitureMapper, Furniture
     public List<Furniture> GetFurnitureByTag(String detail) {
         //根据标签名字查询标签ID
         LambdaQueryWrapper<Tag> t = new LambdaQueryWrapper<>();
-        t.eq(Tag::getTagDetail,detail);
+        t.eq(Tag::getTagName,detail);
         Tag one = tagService.getOne(t);
         //根据映射表查到所有属于该标签的家具id
         LambdaQueryWrapper<Mapping> wrapper = new LambdaQueryWrapper<>();

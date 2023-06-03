@@ -1,16 +1,20 @@
 package com.delicious.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.delicious.annotation.CheckToken;
 import com.delicious.pojo.Result;
 import com.delicious.pojo.entity.Furniture;
 import com.delicious.service.FurnitureService;
+import com.delicious.util.OSSUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 
@@ -31,21 +35,21 @@ public class FurnitureController {
 
     @ApiOperation("查询所有家具")
     @GetMapping("/getfurnitureall")
-    public String GetFurnitureALL() {
+    public Result GetFurnitureALL() {
         List<Furniture> list = furnitureService.list(null);
-        return JSON.toJSONString(Result.ok(list));
+        return Result.ok(list);
     }
 
     @ApiOperation("查询某标签下所有家具")
     @GetMapping("/getfurnitureByTag/{detail}")
-    public String GetFurnitureByTag(@PathVariable String detail) {
+    public Result GetFurnitureByTag(@PathVariable String detail) {
         List<Furniture> furnitures;
         try {
             furnitures = furnitureService.GetFurnitureByTag(detail);
         } catch (Exception e) {
-            return JSON.toJSONString(Result.error());
+            return Result.error();
         }
-        return JSON.toJSONString(Result.ok(furnitures));
+        return Result.ok(furnitures);
     }
 
     @ApiOperation("根据Id查询对应家具")
@@ -55,39 +59,51 @@ public class FurnitureController {
         return Result.ok(furniture);
     }
 
-    @ApiOperation("添加家具")
-    @PostMapping("/addfurniture")
-    public String AddFurniture(Furniture furniture) {
-        Boolean isok = furnitureService.save(furniture);
-        if (isok) {
-            return JSON.toJSONString(Result.ok());
-        } else {
-            return JSON.toJSONString(Result.fail());
-        }
-    }
-
-    @ApiOperation("删除家具")
-    @DeleteMapping("/deletefurniture")
-    public String DeleteFurnitureById(Integer id) {
-        LambdaQueryWrapper<Furniture> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Furniture::getFurnitureId, id);
-        Boolean isok = furnitureService.remove(wrapper);
-        if (isok) {
-            return JSON.toJSONString(Result.ok());
-        } else {
-            return JSON.toJSONString(Result.fail());
-        }
-    }
-
     //=========================================以下是管理员后台的接口============================================================
 
     @ApiOperation("分页获取家具信息")
     @GetMapping("/Admin/GetFurnitureAllPage/{page}/{pageSize}")
     @CheckToken
-    public Result GetTablePage(@PathVariable Integer page,@PathVariable Integer pageSize) {
-        HashMap<String, Object> map = furnitureService.GetFurnitureAllPage(page,pageSize);
-        System.out.println(map);
+    public Result GetTablePage(@PathVariable Integer page, @PathVariable Integer pageSize) {
+        HashMap<String, Object> map = furnitureService.GetFurnitureAllPage(page, pageSize);
+//        System.out.println(map);
         return Result.ok(map);
     }
+
+    @ApiOperation("管理员添加家具")
+    @PostMapping("/Admin/AddFurniture")
+    @CheckToken
+    public Result AddFurniture(@RequestParam("img") MultipartFile img,
+                               @RequestParam("furnitureName") String furnitureName,
+                               @RequestParam("originPrice") BigDecimal originPrice,
+                               @RequestParam("furniturePrice") BigDecimal furniturePrice,
+                               @RequestParam("furnitureQuantity") Integer furnitureQuantity,
+                               @RequestParam("detailedInformation") String detailedInformation
+    ) {
+        String imgurl = null;
+        Result result = Result.ok().setMessage("家具添加成功");
+        try {
+            imgurl = OSSUtils.Upload(img);
+        } catch (Exception e) {
+            result = Result.fail().setMessage("图片上传失败,但其他信息已成功添加");
+        }
+        System.out.println(imgurl);
+        Furniture furniture = new Furniture(null, furnitureName, furniturePrice, originPrice, furnitureQuantity, imgurl, detailedInformation);
+        return furnitureService.save(furniture) ? result : Result.fail().setMessage("家具添加失败");
+    }
+
+        @ApiOperation("管理员删除家具")
+        @DeleteMapping("/Admin/DeleteFurniture")
+        @CheckToken
+        public Result DeleteFurnitureById(@RequestBody String jsonString) {
+            JSONObject jsonObject = JSON.parseObject(jsonString);
+            Integer furnitureId = jsonObject.getInteger("furnitureId");
+
+            Furniture furniture = furnitureService.getById(furnitureId);
+            OSSUtils.Delete(furniture.getFurnitureUrl());
+            LambdaQueryWrapper<Furniture> wrapper = new LambdaQueryWrapper<>();
+            wrapper.eq(Furniture::getFurnitureId, furnitureId);
+            return furnitureService.remove(wrapper) ? Result.ok().setMessage("删除家具成功") : Result.fail().setMessage("删除家具失败");
+        }
 
 }
