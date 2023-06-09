@@ -60,10 +60,10 @@ public class LoginController {
         return Result.ok();
     }
 
-    @ApiOperation("用户注册")
+    @ApiOperation("用户注册/登录")
 //    @ResponseBody
     @PostMapping("/Register")
-    public String Register(@RequestParam("code") String code, @RequestParam("nickName") String nickName, @RequestParam("avatarUrl") String avatarUrl) {
+    public Result Register(@RequestParam("code") String code, @RequestParam("nickName") String nickName, @RequestParam("avatarUrl") String avatarUrl) {
         //根据code获取openid和SessionKey
         Map<String, String> map = loginService.GetOpenidAndSessionKeyByCode(code);
         String openid = map.get("openid");
@@ -78,10 +78,14 @@ public class LoginController {
         User one = userService.getOne(wrapper);
         if (one == null) {
             //如果数据库中没有该openid对应的数据，就注册
-            return userService.save(user) ? JSON.toJSONString(Result.ok()) : JSON.toJSONString(Result.fail());
-        } else {
-            //登录
-            return "已有账号，前往登录";
+            userService.save(user);
+            one = userService.getOne(wrapper);
         }
+        //登录
+        String token = JwtUtils.getToken(one.getUserId().toString());
+        HashMap<String, String> resultMap = new HashMap<>();
+        resultMap.put("token",token);
+        resultMap.put("userId",one.getUserId().toString());
+        return Result.ok(resultMap).setMessage("登陆成功");
     }
 }

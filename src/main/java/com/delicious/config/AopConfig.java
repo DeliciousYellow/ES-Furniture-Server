@@ -10,6 +10,6 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
  * @create: 2023-05-21 18:52
  **/
 @Configuration
-@EnableAspectJAutoProxy //让springAOP参与到目标对象的生命周期中,在这里就是加了指定注解的类或者方法
+@EnableAspectJAutoProxy //自动创建代理来支持切面的使用。
 public class AopConfig {
 }

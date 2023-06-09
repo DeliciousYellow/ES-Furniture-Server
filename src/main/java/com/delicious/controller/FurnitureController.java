@@ -2,11 +2,15 @@ package com.delicious.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.aliyun.oss.OSS;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.delicious.annotation.AddLog;
 import com.delicious.annotation.CheckToken;
 import com.delicious.pojo.Result;
 import com.delicious.pojo.entity.Furniture;
+import com.delicious.pojo.entity.Mapping;
 import com.delicious.service.FurnitureService;
+import com.delicious.service.MappingService;
 import com.delicious.util.OSSUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -32,6 +36,9 @@ public class FurnitureController {
 
     @Resource
     private FurnitureService furnitureService;
+
+    @Resource
+    private MappingService mappingService;
 
     @ApiOperation("查询所有家具")
     @GetMapping("/getfurnitureall")
@@ -72,6 +79,7 @@ public class FurnitureController {
 
     @ApiOperation("管理员添加家具")
     @PostMapping("/Admin/AddFurniture")
+    @AddLog
     @CheckToken
     public Result AddFurniture(@RequestParam("img") MultipartFile img,
                                @RequestParam("furnitureName") String furnitureName,
@@ -94,16 +102,24 @@ public class FurnitureController {
 
         @ApiOperation("管理员删除家具")
         @DeleteMapping("/Admin/DeleteFurniture")
+        @AddLog
         @CheckToken
         public Result DeleteFurnitureById(@RequestBody String jsonString) {
             JSONObject jsonObject = JSON.parseObject(jsonString);
             Integer furnitureId = jsonObject.getInteger("furnitureId");
 
             Furniture furniture = furnitureService.getById(furnitureId);
-            OSSUtils.Delete(furniture.getFurnitureUrl());
-            LambdaQueryWrapper<Furniture> wrapper = new LambdaQueryWrapper<>();
-            wrapper.eq(Furniture::getFurnitureId, furnitureId);
-            return furnitureService.remove(wrapper) ? Result.ok().setMessage("删除家具成功") : Result.fail().setMessage("删除家具失败");
+            if(!OSSUtils.Delete(furniture.getFurnitureUrl())){
+                System.out.println("OSS删除图片失败");
+            }
+            LambdaQueryWrapper<Furniture> furnitureWrapper = new LambdaQueryWrapper<>();
+            furnitureWrapper.eq(Furniture::getFurnitureId, furnitureId);
+
+            LambdaQueryWrapper<Mapping> mappingWrapper = new LambdaQueryWrapper<>();
+            mappingWrapper.eq(Mapping::getFurnitureId, furnitureId);
+            boolean remove = mappingService.remove(mappingWrapper);
+
+            return furnitureService.remove(furnitureWrapper) ? Result.ok().setMessage("删除家具成功") : Result.fail().setMessage("删除家具失败");
         }
 
 }

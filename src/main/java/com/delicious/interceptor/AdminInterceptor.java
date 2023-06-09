@@ -53,6 +53,8 @@ public class AdminInterceptor {
 
     @Around("@annotation(com.delicious.annotation.AddLog)")
     public Result AddLog(ProceedingJoinPoint joinPoint) throws Throwable {
+//        @Addlog注解加一个value存操作类型，添加，删除，修改。
+//        分3中情况来处理日志记录
         System.out.println(joinPoint.getThis());
         System.out.println("======================================添加了Log================================================");
 
