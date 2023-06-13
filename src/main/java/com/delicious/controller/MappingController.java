@@ -5,12 +5,14 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.delicious.annotation.AddLog;
+import com.delicious.annotation.CheckDigest;
 import com.delicious.annotation.CheckToken;
 import com.delicious.pojo.Result;
 import com.delicious.pojo.entity.Mapping;
 import com.delicious.service.MappingService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,8 +37,10 @@ public class MappingController {
 
     //=========================================以下是管理员后台的接口=======================================================
     @ApiOperation("管理员根据{\"furnitureId\":1,\"arrTagId\":[14,1]}添加对应关系")
+    @Transactional
     @AddLog
     @CheckToken
+    @CheckDigest
     @PostMapping("/Admin/SaveMapping")
     public Result SaveMapping(@RequestBody String IdAndArrIdJSON) {
         JSONObject jsonObject = JSON.parseObject(IdAndArrIdJSON);

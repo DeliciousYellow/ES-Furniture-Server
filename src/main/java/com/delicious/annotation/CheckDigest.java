@@ -7,6 +7,5 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.TYPE,ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)//运行时仍然保留
-public @interface CheckToken {
-
+public @interface CheckDigest {
 }

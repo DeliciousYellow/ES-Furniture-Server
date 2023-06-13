@@ -10,4 +10,5 @@ import com.delicious.pojo.entity.Address;
  * @create: 2023-06-09 10:33
  **/
 public interface AddressService extends IService<Address> {
+    Address GetAddressOneByUserId(Integer userId);
 }

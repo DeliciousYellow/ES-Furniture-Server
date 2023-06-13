@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.delicious.annotation.CheckDigest;
 import com.delicious.annotation.CheckToken;
 import com.delicious.pojo.Result;
 import com.delicious.pojo.entity.Mapping;
@@ -14,6 +15,7 @@ import com.delicious.service.TagService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -86,7 +88,9 @@ public class TagController {
 
     @ApiOperation("管理员添加Tag标签")
     @PostMapping("/Admin/AddTag")
+    @Transactional
     @CheckToken
+    @CheckDigest
     public Result AddTag(@RequestBody Tag tag) {
         LambdaQueryWrapper<Tag> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Tag::getTagName,tag.getTagName());
@@ -114,7 +118,9 @@ public class TagController {
 
     @ApiOperation("管理员删除Tag标签")
     @DeleteMapping("/Admin/DeleteTag")
+    @Transactional
     @CheckToken
+    @CheckDigest
     public Result DeleteTag(@RequestBody String JsonArrTagId) {
         JSONObject jsonObject = JSON.parseObject(JsonArrTagId);
         String arrTagId = jsonObject.getString("arrTagId");

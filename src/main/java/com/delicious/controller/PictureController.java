@@ -2,6 +2,7 @@ package com.delicious.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.delicious.annotation.AddLog;
+import com.delicious.annotation.CheckDigest;
 import com.delicious.annotation.CheckToken;
 import com.delicious.pojo.Result;
 import com.delicious.pojo.entity.Picture;
@@ -9,6 +10,7 @@ import com.delicious.service.PictureService;
 import com.delicious.util.OSSUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -38,6 +40,7 @@ public class PictureController {
     }
 
     @ApiOperation("根据图片ID添加商品图片")
+    @Transactional
     @AddLog
     @CheckToken
     @PostMapping("/Admin/AddPictureById")
@@ -53,8 +56,10 @@ public class PictureController {
     }
 
     @ApiOperation("根据图片ID删除商品图片")
+    @Transactional
     @AddLog
     @CheckToken
+    @CheckDigest
     @DeleteMapping("/DeletePictureById")
     public Result DeletePictureById(@RequestParam("pictureId") Integer pictureId) {
         LambdaQueryWrapper<Picture> getwrapper = new LambdaQueryWrapper<>();

@@ -1,5 +1,6 @@
 package com.delicious.pojo.entity;
 
+import com.alibaba.fastjson.annotation.JSONType;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -18,14 +19,15 @@ import lombok.NonNull;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@JSONType(orders={"addressId","userId","consigneeName","consigneeNumber","addressRegion","addressDetail"})
 @TableName("t_address")
 public class Address {
     @TableId(type = IdType.AUTO)
     private Integer addressId;
 
     private Integer userId;
-    @NotNull
     private String consigneeName;
     private String consigneeNumber;
+    private String addressRegion;
     private String addressDetail;
 }

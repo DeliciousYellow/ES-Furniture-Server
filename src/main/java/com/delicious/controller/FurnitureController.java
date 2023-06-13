@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.aliyun.oss.OSS;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.delicious.annotation.AddLog;
+import com.delicious.annotation.CheckDigest;
 import com.delicious.annotation.CheckToken;
 import com.delicious.pojo.Result;
 import com.delicious.pojo.entity.Furniture;
@@ -14,6 +15,7 @@ import com.delicious.service.MappingService;
 import com.delicious.util.OSSUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -73,12 +75,12 @@ public class FurnitureController {
     @CheckToken
     public Result GetTablePage(@PathVariable Integer page, @PathVariable Integer pageSize) {
         HashMap<String, Object> map = furnitureService.GetFurnitureAllPage(page, pageSize);
-//        System.out.println(map);
         return Result.ok(map);
     }
 
     @ApiOperation("管理员添加家具")
     @PostMapping("/Admin/AddFurniture")
+    @Transactional
     @AddLog
     @CheckToken
     public Result AddFurniture(@RequestParam("img") MultipartFile img,
@@ -102,6 +104,7 @@ public class FurnitureController {
 
         @ApiOperation("管理员删除家具")
         @DeleteMapping("/Admin/DeleteFurniture")
+        @Transactional
         @AddLog
         @CheckToken
         public Result DeleteFurnitureById(@RequestBody String jsonString) {

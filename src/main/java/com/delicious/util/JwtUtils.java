@@ -20,14 +20,14 @@ public class JwtUtils {
     private static final String secret = "abcdefghijklmnopqrstuvwxyz123456";
 
     //token生成
-    public static String getToken(String AdminCode) {
+    public static String getToken(String UserId) {
         //获取当前时间
         Date now = new Date();
         //当前时间加上有效时间，得到过期时间
         Date end = new Date(now.getTime()+expire*1000);
         return Jwts.builder()
                 .setHeaderParam("type","JWT")
-                .setSubject(AdminCode)
+                .setSubject(UserId)
                 .setIssuedAt(now)
                 .setExpiration(end)
                 .signWith(SignatureAlgorithm.HS512,secret)//设置签名算法

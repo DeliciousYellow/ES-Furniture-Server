@@ -6,6 +6,8 @@ import com.delicious.pojo.entity.Address;
 import com.delicious.service.AddressService;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
+
 /**
  * @program: ES-furniture
  * @description:
@@ -14,4 +16,10 @@ import org.springframework.stereotype.Service;
  **/
 @Service
 public class AddressServiceImpl extends ServiceImpl<AddressMapper, Address> implements AddressService {
+    @Resource
+    private AddressMapper addressMapper;
+    @Override
+    public Address GetAddressOneByUserId(Integer userId) {
+        return addressMapper.SelectAddressOneByUserId(userId);
+    }
 }
