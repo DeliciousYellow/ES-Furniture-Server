@@ -1,29 +1,28 @@
 package com.delicious.pojo.entity;
 
-import com.alibaba.fastjson.annotation.JSONType;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import io.swagger.models.auth.In;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
  * @program: ES-furniture
- * @description: 购物车表
+ * @description:
  * @author: 王炸！！
- * @create: 2023-03-16 12:51
+ * @create: 2023-06-18 02:12
  **/
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@JSONType(orders={"cartId","userId","cartFurnitureId","cartCount"})
-@TableName("t_cart")
-public class Cart {
+@TableName("t_log")
+public class Log {
     @TableId(type = IdType.AUTO)
-    private Integer cartId;
+    private Integer logId;
+    private Integer adminId;
 
-    private Integer userId;
-    private Integer cartFurnitureId;
-    private Integer cartCount;
+    private String operationType;
+    private String logTime;
 }

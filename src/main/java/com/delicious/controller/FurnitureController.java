@@ -81,7 +81,7 @@ public class FurnitureController {
     @ApiOperation("管理员添加家具")
     @PostMapping("/Admin/AddFurniture")
     @Transactional
-    @AddLog
+    @AddLog("添加")
     @CheckToken
     public Result AddFurniture(@RequestParam("img") MultipartFile img,
                                @RequestParam("furnitureName") String furnitureName,
@@ -105,7 +105,7 @@ public class FurnitureController {
         @ApiOperation("管理员删除家具")
         @DeleteMapping("/Admin/DeleteFurniture")
         @Transactional
-        @AddLog
+        @AddLog("删除")
         @CheckToken
         public Result DeleteFurnitureById(@RequestBody String jsonString) {
             JSONObject jsonObject = JSON.parseObject(jsonString);

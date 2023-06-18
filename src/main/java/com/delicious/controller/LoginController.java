@@ -1,6 +1,7 @@
 package com.delicious.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.delicious.annotation.AddLog;
 import com.delicious.pojo.Result;
 import com.delicious.pojo.entity.Admin;
 import com.delicious.pojo.entity.User;

@@ -41,7 +41,7 @@ public class PictureController {
 
     @ApiOperation("根据图片ID添加商品图片")
     @Transactional
-    @AddLog
+    @AddLog("添加")
     @CheckToken
     @PostMapping("/Admin/AddPictureById")
     public Result AddPictureById(@RequestParam("furnitureId") Integer furnitureId, @RequestParam("picture") MultipartFile picture) {
@@ -57,7 +57,7 @@ public class PictureController {
 
     @ApiOperation("根据图片ID删除商品图片")
     @Transactional
-    @AddLog
+    @AddLog("删除")
     @CheckToken
     @CheckDigest
     @DeleteMapping("/DeletePictureById")

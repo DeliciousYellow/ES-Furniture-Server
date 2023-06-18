@@ -38,7 +38,7 @@ public class MappingController {
     //=========================================以下是管理员后台的接口=======================================================
     @ApiOperation("管理员根据{\"furnitureId\":1,\"arrTagId\":[14,1]}添加对应关系")
     @Transactional
-    @AddLog
+    @AddLog("添加")
     @CheckToken
     @CheckDigest
     @PostMapping("/Admin/SaveMapping")

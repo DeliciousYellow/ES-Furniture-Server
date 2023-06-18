@@ -49,7 +49,6 @@ public class AddressController {
     @Transactional
     @CheckToken
     @CheckDigest
-    @AddLog
     public Result AddAddress(@RequestBody Address address) {
         return addressService.save(address) ? Result.ok().setMessage("添加成功") : Result.fail().setMessage("添加失败");
     }

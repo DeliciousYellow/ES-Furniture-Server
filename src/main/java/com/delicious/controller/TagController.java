@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.delicious.annotation.AddLog;
 import com.delicious.annotation.CheckDigest;
 import com.delicious.annotation.CheckToken;
 import com.delicious.pojo.Result;
@@ -91,6 +92,7 @@ public class TagController {
     @Transactional
     @CheckToken
     @CheckDigest
+    @AddLog("添加")
     public Result AddTag(@RequestBody Tag tag) {
         LambdaQueryWrapper<Tag> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(Tag::getTagName,tag.getTagName());
@@ -121,6 +123,7 @@ public class TagController {
     @Transactional
     @CheckToken
     @CheckDigest
+    @AddLog("删除")
     public Result DeleteTag(@RequestBody String JsonArrTagId) {
         JSONObject jsonObject = JSON.parseObject(JsonArrTagId);
         String arrTagId = jsonObject.getString("arrTagId");

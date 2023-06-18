@@ -1,5 +1,7 @@
 package com.delicious.pojo.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,12 +20,19 @@ import java.util.Date;
 @NoArgsConstructor
 @TableName("t_order")//不同名映射
 public class Order {
+    @TableId(type = IdType.AUTO)
     private String orderId;
+
+    private String orderCode;
+
+    private String creatTime;
+    private String orderState;
+
     private Integer userId;
-    private String orderFurnitureId;
+    private Integer furnitureId;
+    private Integer addressId;
+
     private Integer orderCount;
-    private Date creatTime;
-    private String signerName;
-    private String signerNumber;
-    private String signerAddress;
+    private String orderComment;
+
 }

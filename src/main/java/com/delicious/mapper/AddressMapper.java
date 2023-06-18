@@ -13,7 +13,6 @@ import org.apache.ibatis.annotations.Select;
  * @create: 2023-06-09 10:34
  **/
 public interface AddressMapper extends BaseMapper<Address> {
-
     @Select("SELECT address_region FROM t_address WHERE user_id = #{userId} LIMIT 1")
     Address SelectAddressOneByUserId(@Param("userId") Integer userId);
 
