@@ -5,7 +5,6 @@ import com.delicious.annotation.CheckDigest;
 import com.delicious.annotation.CheckToken;
 import com.delicious.pojo.Result;
 import com.delicious.pojo.entity.Address;
-import com.delicious.pojo.entity.Furniture;
 import com.delicious.service.AddressService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -48,7 +47,7 @@ public class AddressController {
     @GetMapping("/GetAddressById/{id}")
     public Result GetAddressById(@PathVariable Integer id) {
         LambdaQueryWrapper<Address> wrapper = new LambdaQueryWrapper<>();
-        Address address = addressService.getOne(wrapper.eq(Address::getAddressId,id));
+        Address address = addressService.getOne(wrapper.eq(Address::getAddressId, id));
         return Result.ok(address);
     }
 
