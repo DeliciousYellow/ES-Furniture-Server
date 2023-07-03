@@ -98,31 +98,61 @@ public class FurnitureController {
             result = Result.fail().setMessage("图片上传失败,但其他信息已成功添加");
         }
         System.out.println(imgurl);
-        Furniture furniture = new Furniture(null, furnitureName, furniturePrice, originPrice, furnitureQuantity, imgurl, detailedInformation);
+        Furniture furniture = new Furniture(null, furnitureName, furniturePrice, originPrice, furnitureQuantity, 0, imgurl, detailedInformation);
         return furnitureService.save(furniture) ? result : Result.fail().setMessage("家具添加失败");
     }
 
-        @ApiOperation("管理员删除家具")
-        @DeleteMapping("/Admin/DeleteFurniture")
-        @Transactional
-        @AddLog("删除")
-        @CheckToken
-        public Result DeleteFurnitureById(@RequestBody String jsonString) {
-            JSONObject jsonObject = JSON.parseObject(jsonString);
-            Integer furnitureId = jsonObject.getInteger("furnitureId");
-
-            Furniture furniture = furnitureService.getById(furnitureId);
-            if(!OSSUtils.Delete(furniture.getFurnitureUrl())){
-                System.out.println("OSS删除图片失败");
+    @ApiOperation("管理员修改家具")
+    @PostMapping("/Admin/UpdateFurniture")
+    @Transactional
+    @AddLog("修改")
+    @CheckToken
+    public Result UpdateFurniture(@RequestParam("img") MultipartFile img,
+                                  @RequestParam("furnitureId") Integer furnitureId,
+                                  @RequestParam("furnitureName") String furnitureName,
+                                  @RequestParam("originPrice") BigDecimal originPrice,
+                                  @RequestParam("furniturePrice") BigDecimal furniturePrice,
+                                  @RequestParam("furnitureQuantity") Integer furnitureQuantity,
+                                  @RequestParam("detailedInformation") String detailedInformation
+    ) {
+        String imgUrl = null;
+        Result result = Result.ok().setMessage("家具修改成功");
+        if ("图片未作修改时的模拟file对象".equals(img.getOriginalFilename())){
+            Furniture byId = furnitureService.getById(furnitureId);
+            imgUrl = byId.getFurnitureUrl();
+        }else {
+            try {
+                imgUrl = OSSUtils.Upload(img);
+            } catch (Exception e) {
+                result = Result.fail().setMessage("图片上传失败,但其他信息已成功修改");
             }
-            LambdaQueryWrapper<Furniture> furnitureWrapper = new LambdaQueryWrapper<>();
-            furnitureWrapper.eq(Furniture::getFurnitureId, furnitureId);
-
-            LambdaQueryWrapper<Mapping> mappingWrapper = new LambdaQueryWrapper<>();
-            mappingWrapper.eq(Mapping::getFurnitureId, furnitureId);
-            boolean remove = mappingService.remove(mappingWrapper);
-
-            return furnitureService.remove(furnitureWrapper) ? Result.ok().setMessage("删除家具成功") : Result.fail().setMessage("删除家具失败");
+            System.out.println(imgUrl);
         }
+        Furniture furniture = new Furniture(furnitureId, furnitureName, furniturePrice, originPrice, furnitureQuantity, 0, imgUrl, detailedInformation);
+        return furnitureService.updateById(furniture) ? result : Result.fail().setMessage("家具修改失败");
+    }
+
+    @ApiOperation("管理员删除家具")
+    @DeleteMapping("/Admin/DeleteFurniture")
+    @Transactional
+    @AddLog("删除")
+    @CheckToken
+    public Result DeleteFurnitureById(@RequestBody String jsonString) {
+        JSONObject jsonObject = JSON.parseObject(jsonString);
+        Integer furnitureId = jsonObject.getInteger("furnitureId");
+
+        Furniture furniture = furnitureService.getById(furnitureId);
+        if(!OSSUtils.Delete(furniture.getFurnitureUrl())){
+            System.out.println("OSS删除图片失败");
+        }
+        LambdaQueryWrapper<Furniture> furnitureWrapper = new LambdaQueryWrapper<>();
+        furnitureWrapper.eq(Furniture::getFurnitureId, furnitureId);
+
+        LambdaQueryWrapper<Mapping> mappingWrapper = new LambdaQueryWrapper<>();
+        mappingWrapper.eq(Mapping::getFurnitureId, furnitureId);
+        boolean remove = mappingService.remove(mappingWrapper);
+
+        return furnitureService.remove(furnitureWrapper) ? Result.ok().setMessage("删除家具成功") : Result.fail().setMessage("删除家具失败");
+    }
 
 }

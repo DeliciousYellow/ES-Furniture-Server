@@ -3,11 +3,12 @@ package com.delicious.controller;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.delicious.annotation.CheckToken;
 import com.delicious.pojo.Result;
+import com.delicious.pojo.entity.Furniture;
 import com.delicious.pojo.entity.Order;
+import com.delicious.service.FurnitureService;
 import com.delicious.service.OrderService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -29,16 +30,19 @@ public class OrderController {
     @Resource
     private OrderService orderService;
 
+    @Resource
+    private FurnitureService furnitureService;
+
     @ApiOperation("根据用户ID查询订单")
     @GetMapping("/GetOrderByUserId/{userId}")
     @CheckToken
     public Result GetOrderByUserId(@PathVariable Integer userId) {
         LambdaQueryWrapper<Order> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Order::getUserId,userId);
+        wrapper.eq(Order::getUserId, userId);
         List<Order> list = orderService.list(wrapper);
 //        HashMap<String, List<Order>> map = new HashMap<>();
         ArrayList<List<Order>> lists = new ArrayList<>();
-        for(Order order : list){
+        for (Order order : list) {
             boolean found = false;
             for (List<Order> orderList : lists) {
                 if (orderList.get(0).getOrderCode().equals(order.getOrderCode())) {
@@ -62,7 +66,15 @@ public class OrderController {
     @PostMapping("/AddOrderByUserId")
     @CheckToken
     public Result GetOrderByUserId(@RequestBody Order order) {
-        return orderService.save(order) ? Result.ok().setMessage("添加成功") : Result.fail("添加失败");
+        boolean ok = orderService.save(order);
+        //添加订单之后商品库存应该对应减少。
+        if (ok) {
+            Furniture furniture = furnitureService.getById(order.getFurnitureId());
+            furniture.setFurnitureQuantity(furniture.getFurnitureQuantity() - order.getOrderCount());
+            furniture.setSalesVolume(furniture.getSalesVolume() + order.getOrderCount());
+            furnitureService.updateById(furniture);
+        }
+        return ok ? Result.ok().setMessage("添加成功") : Result.fail("添加失败");
     }
 
     //==================================================================================================================

@@ -27,6 +27,8 @@ public class Furniture {
     private BigDecimal furniturePrice;
     private BigDecimal originPrice;
     private Integer furnitureQuantity;
+    private Integer salesVolume;
+
     private String furnitureUrl;
     private String detailedInformation;
 }

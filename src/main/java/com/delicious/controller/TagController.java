@@ -15,7 +15,6 @@ import com.delicious.service.MappingService;
 import com.delicious.service.TagService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
@@ -77,11 +76,11 @@ public class TagController {
     @CheckToken
     public Result GetTagById(@PathVariable Integer id) {
         LambdaQueryWrapper<Mapping> mappingwrapper = new LambdaQueryWrapper<>();
-        mappingwrapper.eq(Mapping::getFurnitureId,id);
+        mappingwrapper.eq(Mapping::getFurnitureId, id);
         List<Mapping> mappings = mappingService.list(mappingwrapper);
 
         List<Tag> tags = new ArrayList<>();
-        for(Mapping m : mappings){
+        for (Mapping m : mappings) {
             tags.add(tagService.getById(m.getTagId()));
         }
         return Result.ok(tags);
@@ -95,24 +94,24 @@ public class TagController {
     @AddLog("添加")
     public Result AddTag(@RequestBody Tag tag) {
         LambdaQueryWrapper<Tag> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(Tag::getTagName,tag.getTagName());
+        wrapper.eq(Tag::getTagName, tag.getTagName());
         List<Tag> list = tagService.list(wrapper);
-        if (list==null){
+        if (list == null) {
             //不存在同名标签，直接添加
             boolean save = tagService.save(tag);
-            return Result.ok().setMessage("成功添加了"+1+"条数据");
-        }else {
+            return Result.ok().setMessage("成功添加了" + 1 + "条数据");
+        } else {
             //存在同名标签
             AtomicBoolean flag = new AtomicBoolean(true);
-            list.forEach(t->{
-                if(t.getTagType().equals(tag.getTagType())){
+            list.forEach(t -> {
+                if (t.getTagType().equals(tag.getTagType())) {
                     flag.set(false);
                 }
             });
-            if (flag.get()){
+            if (flag.get()) {
                 //如果同名的情况下，类型不同，则添加
                 boolean save = tagService.save(tag);
-                return Result.ok().setMessage("成功添加了"+1+"条数据");
+                return Result.ok().setMessage("成功添加了" + 1 + "条数据");
             }
         }
         return Result.fail().setMessage("已存在相同的标签");
@@ -129,16 +128,16 @@ public class TagController {
         String arrTagId = jsonObject.getString("arrTagId");
         JSONArray jsonArray = JSON.parseArray(arrTagId);
         AtomicInteger count = new AtomicInteger(0);
-        jsonArray.forEach(tagId ->{
-            boolean bool = tagService.removeById((Integer)tagId);
-            if (bool){
+        jsonArray.forEach(tagId -> {
+            boolean bool = tagService.removeById((Integer) tagId);
+            if (bool) {
                 //如果成功删除了标签，就需要删除mapping表中所有使用过该标签的映射关系
                 LambdaQueryWrapper<Mapping> wrapper = new LambdaQueryWrapper<>();
-                mappingService.remove(wrapper.eq(Mapping::getTagId,tagId));
+                mappingService.remove(wrapper.eq(Mapping::getTagId, tagId));
                 count.getAndIncrement();
             }
         });
-        return Result.ok(count.get()).setMessage("成功删除了"+count.get()+"条数据");
+        return Result.ok(count.get()).setMessage("成功删除了" + count.get() + "条数据");
     }
 
 }

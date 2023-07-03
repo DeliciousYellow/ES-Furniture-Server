@@ -10,10 +10,7 @@ import com.delicious.service.FurnitureService;
 import com.delicious.util.JwtUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -34,7 +31,7 @@ public class AdminController {
     @Resource
     private FurnitureService furnitureService;
 
-    @ApiOperation("管理员信息获取")
+    @ApiOperation("根据Token获取管理员信息")
     @GetMapping("/GetInfo")
     public Result AdminInfo(String token) {
         String adminId = JwtUtils.getClaimsByToken(token).getSubject();
@@ -43,6 +40,15 @@ public class AdminController {
 //        QueryWrapper<Admin> wrapper = new QueryWrapper<>();
 //        wrapper.eq(adminCode,"admin_code");
         Admin admin = adminService.getOne(wrapper);
+        return Result.ok(admin);
+    }
+
+    @ApiOperation("根据管理员ID获取管理员信息")
+    @GetMapping("/GetAdminById/{id}")
+    @CheckToken
+    public Result GetAdminById(@PathVariable Integer id) {
+        Admin admin = adminService.getById(id);
+        admin.setAdminPwd(null);
         return Result.ok(admin);
     }
 
